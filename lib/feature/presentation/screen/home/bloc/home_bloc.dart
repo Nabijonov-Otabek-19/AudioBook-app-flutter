@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/error/failures.dart';
 import '../../../../data/model/book_model.dart';
+import '../../../../data/repository/repository_impl.dart';
 import '../../../../domain/usecase/get_top_books_usecase.dart';
 
 part 'home_event.dart';
@@ -14,21 +15,29 @@ part 'home_event.dart';
 part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  final GetBooksUseCase getBooksUseCase;
+ // final GetBooksUseCase getBooksUseCase;
   final GetTopBooksUseCase getTopBooksUseCase;
+  final RepositoryImpl repository;
 
   HomeBloc({
-    required this.getBooksUseCase,
+    //required this.getBooksUseCase,
     required this.getTopBooksUseCase,
+    required this.repository,
   }) : super(const HomeState()) {
     on<HomeEvent>((event, emit) async {
       switch (event) {
         case GetBooksEvent():
-          final resultBooks = await getBooksUseCase(
-            Params(offset: 20, limit: state.books.length),
-          );
+          final resultBooks =
+              await repository.getBooks(state.books.length, 20);
           final resultTopBooks = await getTopBooksUseCase(NoParams());
-          await _getBooks(state, emit, resultBooks);
+          if (resultBooks.isEmpty) {
+            emit(state.copyWith(hasReachedMax: true));
+          } else {
+            List<BookModel> books = [...state.books, ...resultBooks];
+            emit(state.copyWith(
+                books: books, loadingState: LoadingState.LOADED));
+          }
+          //await _getBooks(state, emit, resultBooks);
           await _getTopBooks(state, emit, resultTopBooks);
           break;
       }
@@ -51,11 +60,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         if (success.isEmpty) {
           emit(state.copyWith(hasReachedMax: true));
         } else {
-          List<BookModel> books = [];
-          books.addAll(state.books);
-          books.addAll(success);
-          emit(state.copyWith(
-              books: books, loadingState: LoadingState.LOADED));
+          List<BookModel> books = [...state.books, ...success];
+          emit(state.copyWith(books: books, loadingState: LoadingState.LOADED));
         }
       },
     );

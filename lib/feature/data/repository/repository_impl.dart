@@ -32,7 +32,7 @@ class RepositoryImpl implements Repository {
     }
   }
 
-  @override
+  /*@override
   Future<Either<Failure, List<BookModel>>> getBooks(
       int offset, int limit) async {
     try {
@@ -48,7 +48,7 @@ class RepositoryImpl implements Repository {
       print("REPOSITORY BOOKS ERROR = $e");
       return Left(Failure(errorMessage: e.toString()));
     }
-  }
+  }*/
 
   @override
   Future<Either<Failure, List<BookModel>>> getTopBooks() async {
@@ -59,5 +59,16 @@ class RepositoryImpl implements Repository {
       print("REPOSITORY TOPBOOKS ERROR = $e");
       return Left(Failure(errorMessage: e.toString()));
     }
+  }
+
+  @override
+  Future<List<BookModel>> getBooks(int offset, int limit) async {
+    List<BookModel> books;
+    books = await localDataSource.getBooks(offset, limit);
+    if (books.isEmpty) {
+      books = await remoteDataSource.fetchBooks(offset, limit);
+      localDataSource.saveBooks(books);
+    }
+    return books;
   }
 }

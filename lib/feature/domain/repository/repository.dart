@@ -4,7 +4,9 @@ import 'package:audiobook_app/feature/data/model/book_model.dart';
 import 'package:dartz/dartz.dart';
 
 abstract class Repository {
-  Future<Either<Failure, List<BookModel>>> getBooks(int offset, int limit);
+  //Future<Either<Failure, List<BookModel>>> getBooks(int offset, int limit);
+
+  Future<List<BookModel>> getBooks(int offset, int limit);
 
   Future<Either<Failure, List<BookModel>>> getTopBooks();
 

@@ -31,13 +31,14 @@ Future<void> setupDI() async {
 
   // UseCase
   di.registerLazySingleton(() => GetTopBooksUseCase(repository: di()));
-  di.registerLazySingleton(() => GetBooksUseCase(repository: di()));
+  //di.registerLazySingleton(() => GetBooksUseCase(repository: di()));
   di.registerLazySingleton(() => GetAudioFilesUseCase(repository: di()));
 
   // Bloc
   di.registerLazySingleton(() => HomeBloc(
         getTopBooksUseCase: di(),
-        getBooksUseCase: di(),
+        //getBooksUseCase: di(),
+        repository: di(),
       ));
 
   di.registerLazySingleton(() => BookDetailBloc(
