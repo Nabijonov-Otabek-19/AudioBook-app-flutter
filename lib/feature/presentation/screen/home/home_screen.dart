@@ -34,91 +34,85 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: BlocBuilder<HomeBloc, HomeState>(
         builder: (context, state) {
-          if (state.loadingState == LoadingState.EMPTY) {
+          if (state.books.isEmpty) {
             return const LoadingWidget();
-          } else if (state.loadingState == LoadingState.LOADING) {
-            return const LoadingWidget();
-          } else if (state.loadingState == LoadingState.LOADED) {
-            print("HOMESCREEN BOOKS NOT EMPTY");
-            return CustomScrollView(
-              controller: _scrollController,
-              slivers: [
-                const SliverAppBar(
-                  title: Text("Books"),
-                  floating: true,
-                ),
-                const SliverPadding(
-                  padding: EdgeInsets.all(16.0),
-                  sliver: SliverToBoxAdapter(
-                    child: Text(
-                      "Most Downloaded",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.all(16.0),
-                  sliver: SliverGrid(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 16.0,
-                      mainAxisSpacing: 16.0,
-                    ),
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        return BookGridItem(
-                          book: state.top[index],
-                          onTap: () => _openDetail(context, state.top[index]),
-                        );
-                      },
-                      childCount: state.top.length,
-                    ),
-                  ),
-                ),
-                const SliverPadding(
-                  padding: EdgeInsets.all(16.0),
-                  sliver: SliverToBoxAdapter(
-                    child: Text(
-                      "Recent Books",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.all(16.0),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final books = state.books;
-                        if (index >= books.length) {
-                          return const BottomLoader();
-                        } else {
-                          return BookItem(
-                            context: context,
-                            book: books[index],
-                            onOpenDetailTap: () =>
-                                _openDetail(context, books[index]),
-                          );
-                        }
-                      },
-                      childCount: state.hasReachedMax
-                          ? state.books.length
-                          : state.books.length + 1,
-                    ),
-                  ),
-                ),
-              ],
-            );
-          } else {
-            return const Placeholder();
           }
+          print("HOMESCREEN BOOKS NOT EMPTY");
+          return CustomScrollView(
+            controller: _scrollController,
+            slivers: [
+              const SliverAppBar(
+                title: Text("Books"),
+                floating: true,
+              ),
+              const SliverPadding(
+                padding: EdgeInsets.all(16.0),
+                sliver: SliverToBoxAdapter(
+                  child: Text(
+                    "Most Downloaded",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.all(16.0),
+                sliver: SliverGrid(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16.0,
+                    mainAxisSpacing: 16.0,
+                  ),
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      return BookGridItem(
+                        book: state.top[index],
+                        onTap: () => _openDetail(context, state.top[index]),
+                      );
+                    },
+                    childCount: state.top.length,
+                  ),
+                ),
+              ),
+              const SliverPadding(
+                padding: EdgeInsets.all(16.0),
+                sliver: SliverToBoxAdapter(
+                  child: Text(
+                    "Recent Books",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.all(16.0),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final books = state.books;
+                      if (index >= books.length) {
+                        return const BottomLoader();
+                      } else {
+                        return BookItem(
+                          context: context,
+                          book: books[index],
+                          onOpenDetailTap: () =>
+                              _openDetail(context, books[index]),
+                        );
+                      }
+                    },
+                    childCount: state.hasReachedMax
+                        ? state.books.length
+                        : state.books.length + 1,
+                  ),
+                ),
+              ),
+            ],
+          );
         },
       ),
     );
